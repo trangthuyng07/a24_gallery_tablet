@@ -4,9 +4,8 @@ $0
 
 function _filmSectionCarousel(datasets,html,d3)
 {
-  const width = 1000;
-  const defaultHeight = 780
-  
+  const width = 700;
+  const defaultHeight = 600;
 
   const sections = [
     ["Top 10 Profit Films", datasets.topProfit],
@@ -20,22 +19,19 @@ function _filmSectionCarousel(datasets,html,d3)
     ["A24 Rumored Movies", datasets.rumored]
   ];
 
-  const wrapper = html`<div style="position: relative; width: ${width}px; height: ${defaultHeight}px; overflow: hidden; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); background: #000;"></div>`;
+  const wrapper = html`<div style="position: relative; width: ${width}px; height: ${defaultHeight}px; overflow: auto; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); background: #000;"></div>`;
   const track = html`<div style="display: flex; transition: transform 0.5s ease; will-change: transform;"></div>`;
   wrapper.appendChild(track);
 
   const defaultPoster = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/A24_logo.svg/512px-A24_logo.svg.png";
 
   sections.forEach(([title, movies]) => {
-    const cardsPerRow = Math.floor(width / 280);
-    const rows = Math.ceil(movies.length / cardsPerRow);
-    const cardHeight = 340;
     const maxGridHeight = 1420;
     const slideHeight = 540 + maxGridHeight;
 
     const slide = html`
       <div style="min-width: ${width}px; max-width: ${width}px; height: ${slideHeight}px; box-sizing: border-box; padding: 12px; background: #000; color: white; font-family: Inter, sans-serif;">
-        <div style="font-size: 30px; font-weight: 600; margin-bottom: 12px;">${title}</div>
+        <div style="font-size: 22px; font-weight: 600; margin-bottom: 12px;">${title}</div>
         <div style="
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -71,7 +67,7 @@ function _filmSectionCarousel(datasets,html,d3)
                 background: linear-gradient(to top, rgba(0,0,0,0.75), transparent);
                 color: white;
                 font-weight: 600;
-                font-size: 22px;
+                font-size: 18px;
               ">
                 ${movie.title || "Untitled"}
               </div>
@@ -84,7 +80,7 @@ function _filmSectionCarousel(datasets,html,d3)
                 background: rgba(20,20,20,0.95);
                 color: white;
                 padding: 16px;
-                font-size: 14px;
+                font-size: 13px;
                 line-height: 1.5;
                 z-index: 5;
                 font-family: Inter, sans-serif;
@@ -148,30 +144,8 @@ function _filmSectionCarousel(datasets,html,d3)
   wrapper.appendChild(nextBtn);
   wrapper.appendChild(track);
 
-  const dots = html`<div style="position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 10;"></div>`;
-  const dotElements = sections.map((_, i) => {
-    const dot = html`<span style="
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: ${i === current ? '#fff' : '#666'};
-      cursor: pointer;
-      transition: background 0.3s ease;
-    "></span>`;
-    dot.onclick = () => {
-      current = i;
-      updateCarousel();
-    };
-    dots.appendChild(dot);
-    return dot;
-  });
-  wrapper.appendChild(dots);
-
   function updateCarousel() {
     track.style.transform = `translateX(-${width * current}px)`;
-    dotElements.forEach((dot, i) => {
-      dot.style.background = i === current ? '#fff' : '#666';
-    });
   }
 
   const interval = setInterval(() => {
@@ -184,103 +158,6 @@ function _filmSectionCarousel(datasets,html,d3)
   return wrapper;
 }
 
-
-function _createCarousel(html,d3){return(
-(title, movies) => {
-  const container = html`<div style="margin-bottom: 40px; font-family: Inter, sans-serif;"></div>`;
-
-  const header = html`<h2 style="margin-bottom: 12px; font-size: 20px;">${title}</h2>`;
-  container.appendChild(header);
-
-  // Outer wrapper for relative positioning
-  const outer = html`<div style="position: relative;"></div>`;
-  container.appendChild(outer);
-
-  // Scrollable gallery wrapper
-  const wrapper = html`
-    <div style="
-      display: flex;
-      overflow-x: auto;
-      gap: 16px;
-      scroll-snap-type: x mandatory;
-      padding-bottom: 8px;
-      scroll-behavior: smooth;
-    "></div>
-  `;
-  outer.appendChild(wrapper);
-
-  movies.forEach(d => {
-    const card = html`
-      <div style="
-        min-width: 200px;
-        scroll-snap-align: start;
-        background: #000;
-        color: white;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        font-size: 14px;
-        flex-shrink: 0;
-        transition: transform 0.2s ease;
-      "
-        onmouseover="${() => card.style.transform = 'scale(1.05)'}"
-        onmouseout="${() => card.style.transform = 'scale(1)'}"
-      >
-        <img src="${d.poster_url}" style="width: 100%; height: 300px; object-fit: cover;" />
-        <div style="padding: 10px;">
-          <strong>${d.title}</strong><br/>
-          ${d.budget ? `💰 Budget: $${d3.format(",")(d.budget)}<br/>` : ""}
-          ${d.revenue ? `💵 Revenue: $${d3.format(",")(d.revenue)}<br/>` : ""}
-          ${d.profit ? `📈 Profit: $${d3.format(",")(d.profit)}<br/>` : ""}
-          ${d.roi ? `📊 ROI: ${d.roi.toFixed(2)}<br/>` : ""}
-          ${d.vote_average ? `⭐ IMDb: ${d.vote_average}<br/>` : ""}
-          ${d.genre ? `🎭 Genre: ${d.genre}<br/>` : ""}
-          ${d.overview ? `<div style="margin-top: 6px;">📝 ${d.overview}</div>` : ""}
-          ${d.release_date ? `📅 ${d.release_date}` : ""}
-        </div>
-      </div>
-    `;
-    wrapper.appendChild(card);
-  });
-
-  // Left arrow
-  const leftBtn = html`<button style="
-    position: absolute;
-    top: 40%;
-    left: -10px;
-    transform: translateY(-50%);
-    background: rgba(0,0,0,0.5);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    cursor: pointer;
-    font-size: 18px;
-  ">‹</button>`;
-  leftBtn.onclick = () => wrapper.scrollBy({ left: -300, behavior: 'smooth' });
-  outer.appendChild(leftBtn);
-
-  // Right arrow
-  const rightBtn = html`<button style="
-    position: absolute;
-    top: 40%;
-    right: -10px;
-    transform: translateY(-50%);
-    background: rgba(0,0,0,0.5);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    cursor: pointer;
-    font-size: 18px;
-  ">›</button>`;
-  rightBtn.onclick = () => wrapper.scrollBy({ left: 300, behavior: 'smooth' });
-  outer.appendChild(rightBtn);
-
-  return container;
-}
 )}
 
 function _datasets(cleanMovies,d3)
