@@ -157,7 +157,6 @@ function _filmSectionCarousel(datasets,html,d3)
 
   return wrapper;
 }
-
 )}
 
 function _datasets(cleanMovies,d3)
