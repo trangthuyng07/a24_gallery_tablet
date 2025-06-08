@@ -1,0 +1,14 @@
+{
+  "name": "7e634ebe314443f8",
+  "main": "7e634ebe314443f8@207.js",
+  "version": "207.0.0",
+  "homepage": "https://observablehq.com/d/7e634ebe314443f8",
+  "author": {
+    "name": "trangthuy",
+    "url": "https://observablehq.com/@trangthuy"
+  },
+  "type": "module",
+  "peerDependencies": {
+    "@observablehq/runtime": "4 - 5"
+  }
+}
