@@ -5,7 +5,7 @@ $0
 function _filmSectionCarousel(datasets,html,d3)
 {
   const width = 700;
-  const defaultHeight = 600;
+  const defaultHeight = 800;
 
   const sections = [
     ["Top 10 Profit Films", datasets.topProfit],
